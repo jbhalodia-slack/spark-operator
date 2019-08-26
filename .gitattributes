@@ -1,0 +1,2 @@
+/spark-on-k8s-operator filter=lfs diff=lfs merge=lfs -text
+/hack/api-ref-docs filter=lfs diff=lfs merge=lfs -text
