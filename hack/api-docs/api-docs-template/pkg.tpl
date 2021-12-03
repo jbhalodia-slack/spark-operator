@@ -18,9 +18,9 @@
 
     {{ with (index .GoPackages 0 )}}
         {{ with .DocComments }}
-        <p>
+        <div>
             {{ safe (renderComments .) }}
-        </p>
+        </div>
         {{ end }}
     {{ end }}
 
@@ -42,8 +42,7 @@
 {{ end }}
 
 <p><em>
-    Generated with <code>gen-crd-api-reference-docs</code>
-    {{ with .gitCommit }} on git commit <code>{{ . }}</code>{{end}}.
+    Generated with <code>https://github.com/ahmetb/gen-crd-api-reference-docs.git</code> on git commit <code>ccf856504caaeac38151b57a950d3f8a7942b9db</code>.
 </em></p>
 
 {{ end }}
