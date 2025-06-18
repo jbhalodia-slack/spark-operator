@@ -32,9 +32,10 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
+	// +kubebuilder:scaffold:imports
+
 	"github.com/kubeflow/spark-operator/api/v1beta1"
 	"github.com/kubeflow/spark-operator/api/v1beta2"
-	// +kubebuilder:scaffold:imports
 )
 
 // These tests use Ginkgo (BDD-style Go testing framework). Refer to

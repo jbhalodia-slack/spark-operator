@@ -1,5 +1,5 @@
-#!/bin/bash
-#
+#!/usr/bin/env bash
+
 # Copyright 2017 The Kubernetes Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,22 +14,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+set -o xtrace
 set -o errexit
 set -o nounset
 set -o pipefail
 
-SCRIPT_ROOT=$(dirname ${BASH_SOURCE})/..
+GO_CMD=${1:-go}
+SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
+SCRIPT_ROOT="${SCRIPT_DIR}/.."
+CODEGEN_PKG="$($GO_CMD list -m -mod=readonly -f "{{.Dir}}" k8s.io/code-generator)"
+SPARK_OPERATOR_PKG="spark-operator"
 
-# generate the code with:
-# --output-base    because this script should also be able to run inside the vendor dir of
-#                  k8s.io/kubernetes. The output-base is needed for the generators to output into the vendor dir
-#                  instead of the $GOPATH directly. For normal projects this can be dropped.
-${SCRIPT_ROOT}/hack/generate-groups.sh "all" \
-  github.com/kubeflow/spark-operator/pkg/client github.com/kubeflow/spark-operator/pkg/apis \
-  sparkoperator.k8s.io:v1beta1,v1beta2 \
-  --go-header-file "$(dirname ${BASH_SOURCE})/custom-boilerplate.go.txt" \
-  --output-base "$(dirname ${BASH_SOURCE})/../../../.."
+source "${CODEGEN_PKG}/kube_codegen.sh"
 
-# To use your own boilerplate text append:
-#   --go-header-file ${SCRIPT_ROOT}/hack/custom-boilerplate.go.txt
+# Generate tagged helper code: conversions, deepcopy, defaults and validations
+kube::codegen::gen_helpers \
+    --boilerplate "${SCRIPT_ROOT}/hack/boilerplate.go.txt" \
+    "${SCRIPT_ROOT}"
 
+# Generate register code
+kube::codegen::gen_register \
+    --boilerplate "${SCRIPT_ROOT}/hack/boilerplate.go.txt" \
+    "${SCRIPT_ROOT}"
+
+kube::codegen::gen_client \
+    --output-dir "${SCRIPT_ROOT}/clienta" \
+    --output-pkg "${SPARK_OPERATOR_PKG}/clienta" \
+    --boilerplate "${SCRIPT_ROOT}/hack/boilerplate.go.txt" \
+    "${SCRIPT_ROOT}"
