@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -o xtrace
 set -o errexit
 set -o nounset
 set -o pipefail
@@ -23,7 +22,7 @@ GO_CMD=${1:-go}
 SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
 SCRIPT_ROOT="${SCRIPT_DIR}/.."
 CODEGEN_PKG="$($GO_CMD list -m -mod=readonly -f "{{.Dir}}" k8s.io/code-generator)"
-SPARK_OPERATOR_PKG="spark-operator"
+SPARK_OPERATOR_PKG="github.com/kubeflow/spark-operator"
 
 source "${CODEGEN_PKG}/kube_codegen.sh"
 
@@ -38,7 +37,9 @@ kube::codegen::gen_register \
     "${SCRIPT_ROOT}"
 
 kube::codegen::gen_client \
-    --output-dir "${SCRIPT_ROOT}/clienta" \
-    --output-pkg "${SPARK_OPERATOR_PKG}/clienta" \
+    --with-watch \
+    --with-applyconfig \
+    --output-dir "${SCRIPT_ROOT}/client-go" \
+    --output-pkg "${SPARK_OPERATOR_PKG}/client-go" \
     --boilerplate "${SCRIPT_ROOT}/hack/boilerplate.go.txt" \
     "${SCRIPT_ROOT}"

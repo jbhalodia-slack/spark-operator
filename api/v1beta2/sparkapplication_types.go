@@ -179,7 +179,7 @@ type SparkApplicationStatus struct {
 // +kubebuilder:printcolumn:JSONPath=.status.terminationTime,name=Finish,type=string
 // +kubebuilder:printcolumn:JSONPath=.metadata.creationTimestamp,name=Age,type=date
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
-
+// +genclient
 // SparkApplication is the Schema for the sparkapplications API
 type SparkApplication struct {
 	metav1.TypeMeta   `json:",inline"`
